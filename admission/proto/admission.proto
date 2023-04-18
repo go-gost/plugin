@@ -1,0 +1,19 @@
+// protoc --go_out=. --go_opt=paths=source_relative \
+//	--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+//	admission.proto
+
+syntax = "proto3";
+package proto;
+option go_package = "github.com/go-gost/plugin/admission/proto";
+
+message AdmissionRequest {
+	string addr = 1;
+}
+
+message AdmissionReply {
+	bool ok = 1;
+}
+
+service Admission {
+	rpc Admit(AdmissionRequest) returns (AdmissionReply);
+}

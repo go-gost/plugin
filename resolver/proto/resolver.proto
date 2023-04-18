@@ -1,0 +1,21 @@
+// protoc --go_out=. --go_opt=paths=source_relative \
+//	--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+//	resolver.proto
+
+syntax = "proto3";
+package proto;
+option go_package = "github.com/go-gost/plugin/resolver/proto";
+
+message ResolveRequest {
+	string network = 1;
+	string host = 2;
+}
+
+message ResolveReply {
+	repeated string ips = 1;
+	bool ok = 2;
+}
+
+service Resolver{
+	rpc Resolve(ResolveRequest) returns (ResolveReply);
+}
