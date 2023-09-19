@@ -9,6 +9,7 @@ option go_package = "github.com/go-gost/plugin/resolver/proto";
 message ResolveRequest {
 	string network = 1;
 	string host = 2;
+	string client = 3;
 }
 
 message ResolveReply {

@@ -31,6 +31,7 @@ func (s *server) Authenticate(ctx context.Context, in *proto.AuthenticateRequest
 	reply := &proto.AuthenticateReply{}
 	if in.GetUsername() == "gost" && in.GetPassword() == "gost" {
 		reply.Ok = true
+		reply.Id = "gost"
 	}
 	log.Printf("auth: %s, %s, %v", in.GetUsername(), in.GetPassword(), reply.Ok)
 	return reply, nil
