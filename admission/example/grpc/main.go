@@ -21,7 +21,11 @@ type server struct {
 
 func (s *server) Admit(ctx context.Context, in *proto.AdmissionRequest) (*proto.AdmissionReply, error) {
 	reply := &proto.AdmissionReply{}
-	if in.GetAddr() == "127.0.0.1" {
+	host := in.GetAddr()
+	if v, _, _ := net.SplitHostPort(host); v != "" {
+		host = v
+	}
+	if host == "127.0.0.1" {
 		reply.Ok = true
 	}
 	log.Printf("admission: %s, %v", in.GetAddr(), reply.Ok)
