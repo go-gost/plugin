@@ -9,6 +9,7 @@ option go_package = "github.com/go-gost/plugin/auth/proto";
 message AuthenticateRequest {
 	string username = 1;
 	string password = 2;
+	string client = 3;
 }
 
 message AuthenticateReply {

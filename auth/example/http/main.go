@@ -16,6 +16,7 @@ var (
 type autherRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Client   string `json:"client"`
 }
 
 type autherResponse struct {
@@ -45,7 +46,7 @@ func main() {
 			resp.ID = "gost"
 		}
 
-		log.Printf("auth: %s, %s, %v", rb.Username, rb.Password, resp.OK)
+		log.Printf("auth: %s %s, %s, %v", rb.Client, rb.Username, rb.Password, resp.OK)
 
 		json.NewEncoder(w).Encode(resp)
 	})
