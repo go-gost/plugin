@@ -9,6 +9,8 @@ option go_package = "github.com/go-gost/plugin/bypass/proto";
 message BypassRequest {
 	string addr = 1;
 	string client = 2;
+	string network = 3;
+	string host = 4;
 }
 
 message BypassReply {
