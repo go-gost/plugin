@@ -77,7 +77,7 @@ func main() {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		log.Printf("hop: %s %s %s %s", rb.Network, rb.Addr, rb.Host, rb.Client)
+		log.Printf("hop: network=%s addr=%s host=%s client=%s", rb.Network, rb.Addr, rb.Host, rb.Client)
 
 		node := nodes[counter.Add(1)%uint64(len(nodes))]
 		v, _ := json.Marshal(node)
