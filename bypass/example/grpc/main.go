@@ -21,14 +21,14 @@ type server struct {
 
 func (s *server) Bypass(ctx context.Context, in *proto.BypassRequest) (*proto.BypassReply, error) {
 	reply := &proto.BypassReply{}
-	host := in.GetAddr()
+	host := in.GetHost()
 	if v, _, _ := net.SplitHostPort(host); v != "" {
 		host = v
 	}
 	if host == "example.com" {
 		reply.Ok = true
 	}
-	log.Printf("bypass(%s): %s, %v", in.GetClient(), in.GetAddr(), reply.Ok)
+	log.Printf("bypass(%s): %s/%s, %s, %v", in.GetClient(), in.GetAddr(), in.GetNetwork(), in.GetHost(), reply.Ok)
 	return reply, nil
 }
 

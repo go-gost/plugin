@@ -21,8 +21,15 @@ type server struct {
 
 func (s *server) Get(ctx context.Context, in *proto.GetRequest) (*proto.GetReply, error) {
 	reply := &proto.GetReply{}
-	log.Printf("ingress: %s", in.GetHost())
+	log.Printf("ingress get: %s", in.GetHost())
 	return reply, nil
+}
+
+func (s *server) Set(ctx context.Context, in *proto.SetRequest) (*proto.SetReply, error) {
+	reply := &proto.SetReply{}
+	log.Printf("ingress set: %s -> %s", in.GetHost(), in.GetEndpoint())
+	return reply, nil
+
 }
 
 func main() {

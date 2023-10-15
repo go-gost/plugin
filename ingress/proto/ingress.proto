@@ -14,6 +14,16 @@ message GetReply {
 	string endpoint = 1;
 }
 
+message SetRequest {
+	string host = 1;
+	string endpoint = 2;
+}
+
+message SetReply {
+	bool ok = 1;
+}
+
 service Ingress {
 	rpc Get(GetRequest) returns (GetReply);
+	rpc Set(SetRequest) returns (SetReply);
 }
