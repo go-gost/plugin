@@ -11,6 +11,7 @@ message BypassRequest {
 	string client = 2;
 	string network = 3;
 	string host = 4;
+	string path = 5;
 }
 
 message BypassReply {
