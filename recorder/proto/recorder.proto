@@ -8,6 +8,7 @@ option go_package = "github.com/go-gost/plugin/ingress/proto";
 
 message RecordRequest {
 	bytes data = 1;
+	bytes metadata = 2;
 }
 
 message RecordReply {

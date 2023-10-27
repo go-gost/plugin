@@ -23,7 +23,8 @@ func (s *server) Record(ctx context.Context, in *proto.RecordRequest) (*proto.Re
 	reply := &proto.RecordReply{
 		Ok: true,
 	}
-	log.Printf("record: %s", string(in.GetData()))
+	log.Printf("data: %s, metadata: %s", string(in.GetData()), string(in.Metadata))
+
 	return reply, nil
 }
 
