@@ -1,0 +1,55 @@
+// protoc --go_out=. --go_opt=paths=source_relative \
+//	--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+//	sd.proto
+
+syntax = "proto3";
+package proto;
+option go_package = "github.com/go-gost/plugin/sd/proto";
+
+message RegisterRequest {
+	string name = 1;
+	string network = 2;
+	string address = 3;
+}
+
+message RegisterReply {
+	bool ok = 1;
+ }
+
+message RenewRequest {
+	string name = 1;
+}
+
+message RenewReply {
+	bool ok = 1;
+}
+
+message DeregisterRequest {
+	string name = 1;
+}
+
+message DeregisterReply { 
+	bool ok = 1;
+}
+
+message Service {
+	string node = 1;
+	string name = 2;
+	string network = 3;
+	string address = 4;
+}
+
+message GetServiceRequest {
+	string name = 1;
+}
+
+message GetServiceReply {
+	repeated Service services = 1; 
+}
+
+service SD {
+	rpc Register(RegisterRequest) returns (RegisterReply);
+	rpc Deregister(DeregisterRequest) returns (DeregisterReply);
+	rpc Renew(RenewRequest) returns (RenewReply);
+	rpc Get(GetServiceRequest) returns (GetServiceReply);
+}
