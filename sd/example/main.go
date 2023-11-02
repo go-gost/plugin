@@ -21,19 +21,19 @@ type server struct {
 
 func (s *server) Register(ctx context.Context, in *proto.RegisterRequest) (*proto.RegisterReply, error) {
 	reply := &proto.RegisterReply{}
-	log.Printf("register: %s, %s, %s", in.GetName(), in.GetNetwork(), in.GetAddress())
+	log.Printf("register: %+v", in.GetService())
 	return reply, nil
 }
 
 func (s *server) Deregister(ctx context.Context, in *proto.DeregisterRequest) (*proto.DeregisterReply, error) {
 	reply := &proto.DeregisterReply{}
-	log.Printf("deregister: %s", in.GetName())
+	log.Printf("deregister: %+v", in.GetService())
 	return reply, nil
 }
 
 func (s *server) Renew(ctx context.Context, in *proto.RenewRequest) (*proto.RenewReply, error) {
 	reply := &proto.RenewReply{}
-	log.Printf("renew: %s", in.GetName())
+	log.Printf("renew: %+v", in.GetService())
 	return reply, nil
 }
 

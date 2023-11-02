@@ -7,9 +7,7 @@ package proto;
 option go_package = "github.com/go-gost/plugin/sd/proto";
 
 message RegisterRequest {
-	string name = 1;
-	string network = 2;
-	string address = 3;
+	Service service = 1;
 }
 
 message RegisterReply {
@@ -17,7 +15,7 @@ message RegisterReply {
  }
 
 message RenewRequest {
-	string name = 1;
+	Service service = 1;
 }
 
 message RenewReply {
@@ -25,7 +23,7 @@ message RenewReply {
 }
 
 message DeregisterRequest {
-	string name = 1;
+	Service service = 1;
 }
 
 message DeregisterReply { 
@@ -33,10 +31,11 @@ message DeregisterReply {
 }
 
 message Service {
-	string node = 1;
+	string id = 1;
 	string name = 2;
-	string network = 3;
-	string address = 4;
+	string node = 3;
+	string network = 4;
+	string address = 5;
 }
 
 message GetServiceRequest {
