@@ -1,0 +1,23 @@
+// protoc --go_out=. --go_opt=paths=source_relative \
+//	--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+//	limiter.proto
+
+syntax = "proto3";
+package proto;
+option go_package = "github.com/go-gost/plugin/limiter/traffic/proto";
+
+message LimitRequest {
+	string network = 1;
+	string addr = 2;
+	string client = 3;
+	string src = 4;
+}
+
+message LimitReply {
+	int64 in = 1;
+	int64 out = 2;
+}
+
+service Limiter {
+	rpc Limit(LimitRequest) returns (LimitReply);
+}

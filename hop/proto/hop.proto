@@ -12,6 +12,7 @@ message SelectRequest {
 	string host = 3;
 	string client = 4;
 	string path = 5;
+	string src = 6;
 }
 
 message SelectReply {
