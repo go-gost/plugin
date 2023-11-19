@@ -15,16 +15,6 @@ message GetRouteReply {
 	string gateway = 2;
 }
 
-message SetRouteRequest {
-	string net = 1;
-	string gateway = 2;
-}
-
-message SetRouteReply {
-	bool ok = 1;
-}
-
 service Router {
 	rpc GetRoute(GetRouteRequest) returns (GetRouteReply);
-	rpc SetRoute(SetRouteRequest) returns (SetRouteReply);
 }

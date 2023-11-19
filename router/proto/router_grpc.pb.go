@@ -23,7 +23,6 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RouterClient interface {
 	GetRoute(ctx context.Context, in *GetRouteRequest, opts ...grpc.CallOption) (*GetRouteReply, error)
-	SetRoute(ctx context.Context, in *SetRouteRequest, opts ...grpc.CallOption) (*SetRouteReply, error)
 }
 
 type routerClient struct {
@@ -43,21 +42,11 @@ func (c *routerClient) GetRoute(ctx context.Context, in *GetRouteRequest, opts .
 	return out, nil
 }
 
-func (c *routerClient) SetRoute(ctx context.Context, in *SetRouteRequest, opts ...grpc.CallOption) (*SetRouteReply, error) {
-	out := new(SetRouteReply)
-	err := c.cc.Invoke(ctx, "/proto.Router/SetRoute", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // RouterServer is the server API for Router service.
 // All implementations must embed UnimplementedRouterServer
 // for forward compatibility
 type RouterServer interface {
 	GetRoute(context.Context, *GetRouteRequest) (*GetRouteReply, error)
-	SetRoute(context.Context, *SetRouteRequest) (*SetRouteReply, error)
 	mustEmbedUnimplementedRouterServer()
 }
 
@@ -67,9 +56,6 @@ type UnimplementedRouterServer struct {
 
 func (UnimplementedRouterServer) GetRoute(context.Context, *GetRouteRequest) (*GetRouteReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRoute not implemented")
-}
-func (UnimplementedRouterServer) SetRoute(context.Context, *SetRouteRequest) (*SetRouteReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetRoute not implemented")
 }
 func (UnimplementedRouterServer) mustEmbedUnimplementedRouterServer() {}
 
@@ -102,24 +88,6 @@ func _Router_GetRoute_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Router_SetRoute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetRouteRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RouterServer).SetRoute(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/proto.Router/SetRoute",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RouterServer).SetRoute(ctx, req.(*SetRouteRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Router_ServiceDesc is the grpc.ServiceDesc for Router service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -130,10 +98,6 @@ var Router_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRoute",
 			Handler:    _Router_GetRoute_Handler,
-		},
-		{
-			MethodName: "SetRoute",
-			Handler:    _Router_SetRoute_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
