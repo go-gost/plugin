@@ -22,8 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type IngressClient interface {
-	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetReply, error)
-	Set(ctx context.Context, in *SetRequest, opts ...grpc.CallOption) (*SetReply, error)
+	GetRule(ctx context.Context, in *GetRuleRequest, opts ...grpc.CallOption) (*GetRuleReply, error)
+	SetRule(ctx context.Context, in *SetRuleRequest, opts ...grpc.CallOption) (*SetRuleReply, error)
 }
 
 type ingressClient struct {
@@ -34,18 +34,18 @@ func NewIngressClient(cc grpc.ClientConnInterface) IngressClient {
 	return &ingressClient{cc}
 }
 
-func (c *ingressClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetReply, error) {
-	out := new(GetReply)
-	err := c.cc.Invoke(ctx, "/proto.Ingress/Get", in, out, opts...)
+func (c *ingressClient) GetRule(ctx context.Context, in *GetRuleRequest, opts ...grpc.CallOption) (*GetRuleReply, error) {
+	out := new(GetRuleReply)
+	err := c.cc.Invoke(ctx, "/proto.Ingress/GetRule", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *ingressClient) Set(ctx context.Context, in *SetRequest, opts ...grpc.CallOption) (*SetReply, error) {
-	out := new(SetReply)
-	err := c.cc.Invoke(ctx, "/proto.Ingress/Set", in, out, opts...)
+func (c *ingressClient) SetRule(ctx context.Context, in *SetRuleRequest, opts ...grpc.CallOption) (*SetRuleReply, error) {
+	out := new(SetRuleReply)
+	err := c.cc.Invoke(ctx, "/proto.Ingress/SetRule", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,8 +56,8 @@ func (c *ingressClient) Set(ctx context.Context, in *SetRequest, opts ...grpc.Ca
 // All implementations must embed UnimplementedIngressServer
 // for forward compatibility
 type IngressServer interface {
-	Get(context.Context, *GetRequest) (*GetReply, error)
-	Set(context.Context, *SetRequest) (*SetReply, error)
+	GetRule(context.Context, *GetRuleRequest) (*GetRuleReply, error)
+	SetRule(context.Context, *SetRuleRequest) (*SetRuleReply, error)
 	mustEmbedUnimplementedIngressServer()
 }
 
@@ -65,11 +65,11 @@ type IngressServer interface {
 type UnimplementedIngressServer struct {
 }
 
-func (UnimplementedIngressServer) Get(context.Context, *GetRequest) (*GetReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+func (UnimplementedIngressServer) GetRule(context.Context, *GetRuleRequest) (*GetRuleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRule not implemented")
 }
-func (UnimplementedIngressServer) Set(context.Context, *SetRequest) (*SetReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
+func (UnimplementedIngressServer) SetRule(context.Context, *SetRuleRequest) (*SetRuleReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetRule not implemented")
 }
 func (UnimplementedIngressServer) mustEmbedUnimplementedIngressServer() {}
 
@@ -84,38 +84,38 @@ func RegisterIngressServer(s grpc.ServiceRegistrar, srv IngressServer) {
 	s.RegisterService(&Ingress_ServiceDesc, srv)
 }
 
-func _Ingress_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetRequest)
+func _Ingress_GetRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRuleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IngressServer).Get(ctx, in)
+		return srv.(IngressServer).GetRule(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Ingress/Get",
+		FullMethod: "/proto.Ingress/GetRule",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IngressServer).Get(ctx, req.(*GetRequest))
+		return srv.(IngressServer).GetRule(ctx, req.(*GetRuleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Ingress_Set_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetRequest)
+func _Ingress_SetRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetRuleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IngressServer).Set(ctx, in)
+		return srv.(IngressServer).SetRule(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Ingress/Set",
+		FullMethod: "/proto.Ingress/SetRule",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IngressServer).Set(ctx, req.(*SetRequest))
+		return srv.(IngressServer).SetRule(ctx, req.(*SetRuleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -128,12 +128,12 @@ var Ingress_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*IngressServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Get",
-			Handler:    _Ingress_Get_Handler,
+			MethodName: "GetRule",
+			Handler:    _Ingress_GetRule_Handler,
 		},
 		{
-			MethodName: "Set",
-			Handler:    _Ingress_Set_Handler,
+			MethodName: "SetRule",
+			Handler:    _Ingress_SetRule_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

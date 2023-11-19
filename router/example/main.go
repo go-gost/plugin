@@ -7,7 +7,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/go-gost/plugin/ingress/proto"
+	"github.com/go-gost/plugin/router/proto"
 	"google.golang.org/grpc"
 )
 
@@ -16,20 +16,19 @@ var (
 )
 
 type server struct {
-	proto.UnimplementedIngressServer
+	proto.UnimplementedRouterServer
 }
 
-func (s *server) GetRule(ctx context.Context, in *proto.GetRuleRequest) (*proto.GetRuleReply, error) {
-	reply := &proto.GetRuleReply{}
-	log.Printf("ingress get: %s", in.GetHost())
+func (s *server) GetRoute(ctx context.Context, in *proto.GetRouteRequest) (*proto.GetRouteReply, error) {
+	reply := &proto.GetRouteReply{}
+	log.Printf("router get: dst=%s", in.GetDst())
 	return reply, nil
 }
 
-func (s *server) SetRule(ctx context.Context, in *proto.SetRuleRequest) (*proto.SetRuleReply, error) {
-	reply := &proto.SetRuleReply{}
-	log.Printf("ingress set: %s -> %s", in.GetHost(), in.GetEndpoint())
+func (s *server) SetRoute(ctx context.Context, in *proto.SetRouteRequest) (*proto.SetRouteReply, error) {
+	reply := &proto.SetRouteReply{}
+	log.Printf("router set: %s -> %s", in.GetNet(), in.GetGateway())
 	return reply, nil
-
 }
 
 func main() {
@@ -39,7 +38,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	proto.RegisterIngressServer(s, &server{})
+	proto.RegisterRouterServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
