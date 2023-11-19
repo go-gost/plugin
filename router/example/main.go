@@ -25,12 +25,6 @@ func (s *server) GetRoute(ctx context.Context, in *proto.GetRouteRequest) (*prot
 	return reply, nil
 }
 
-func (s *server) SetRoute(ctx context.Context, in *proto.SetRouteRequest) (*proto.SetRouteReply, error) {
-	reply := &proto.SetRouteReply{}
-	log.Printf("router set: %s -> %s", in.GetNet(), in.GetGateway())
-	return reply, nil
-}
-
 func main() {
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
