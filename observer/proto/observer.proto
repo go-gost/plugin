@@ -1,0 +1,43 @@
+// protoc --go_out=. --go_opt=paths=source_relative \
+//	--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+//	observer.proto
+
+syntax = "proto3";
+package proto;
+option go_package = "github.com/go-gost/plugin/observer/proto";
+
+message ObserveRequest {
+	repeated Event events = 1;
+}
+
+message Event {
+	string kind = 1;
+	string service = 2;
+	string client = 3;
+	string type = 4;
+	Stats stats = 5;
+	ServiceStatus status = 6;
+}
+
+message ServiceStatus {
+	string state = 1;
+	string msg = 2;
+}
+
+message Stats {
+	uint64 totalConns = 1;
+	uint64 currentConns = 2;
+	uint64 inputBytes = 3;
+	uint64 outputBytes = 4;
+	uint64 totalErrs = 5;
+}
+
+
+message ObserveReply {
+	bool ok = 1;
+}
+
+
+service Observer {
+	rpc Observe(ObserveRequest) returns (ObserveReply);
+}
