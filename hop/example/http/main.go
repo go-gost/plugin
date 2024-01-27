@@ -56,10 +56,6 @@ type hopRequest struct {
 	Client  string `json:"client"`
 }
 
-type hopResponse struct {
-	Node string `json:"node"`
-}
-
 func main() {
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
@@ -80,11 +76,7 @@ func main() {
 		log.Printf("hop: network=%s addr=%s host=%s client=%s", rb.Network, rb.Addr, rb.Host, rb.Client)
 
 		node := nodes[counter.Add(1)%uint64(len(nodes))]
-		v, _ := json.Marshal(node)
-
-		resp := hopResponse{Node: string(v)}
-
-		json.NewEncoder(w).Encode(resp)
+		json.NewEncoder(w).Encode(node)
 	})
 
 	if err := http.Serve(lis, nil); err != nil {

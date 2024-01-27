@@ -63,7 +63,7 @@ func main() {
 		}
 
 		resp := observeResponse{
-			OK: false,
+			OK: true,
 		}
 
 		for _, event := range rb.Events {
