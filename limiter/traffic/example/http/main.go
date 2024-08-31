@@ -14,6 +14,8 @@ var (
 )
 
 type limiterRequest struct {
+	Scope   string `json:"scope"`
+	Service string `json:"service"`
 	Network string `json:"network"`
 	Addr    string `json:"addr"`
 	Client  string `json:"client"`
@@ -46,7 +48,14 @@ func main() {
 			Out: 512 * 1024,  // 512KB
 		}
 
-		log.Printf("limiter: client=%s src=%s network=%s, addr=%s", req.Client, req.Src, req.Network, req.Addr)
+		if req.Client == "user1" {
+			resp = limiterResponse{
+				In: 1024 * 1024 * 10,
+				// Out: 1024 * 1024,
+			}
+		}
+
+		log.Printf("limiter: service=%s scope=%s client=%s src=%s network=%s, addr=%s", req.Service, req.Scope, req.Client, req.Src, req.Network, req.Addr)
 
 		json.NewEncoder(w).Encode(resp)
 	})

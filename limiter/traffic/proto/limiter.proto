@@ -11,6 +11,8 @@ message LimitRequest {
 	string addr = 2;
 	string client = 3;
 	string src = 4;
+	string service = 5;
+	string scope = 6;
 }
 
 message LimitReply {
