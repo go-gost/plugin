@@ -8,10 +8,11 @@ option go_package = "github.com/go-gost/plugin/router/proto";
 
 message GetRouteRequest {
 	string dst = 1;
+	string id = 2;
 }
 
 message GetRouteReply {
-	string net = 1;
+	string dst = 1;
 	string gateway = 2;
 }
 

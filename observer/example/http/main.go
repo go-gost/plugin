@@ -30,7 +30,7 @@ type event struct {
 
 type statsEvent struct {
 	TotalConns   uint64 `json:"totalConns"`
-	CurrentConns int64  `json:"currentConns"`
+	CurrentConns uint64 `json:"currentConns"`
 	InputBytes   uint64 `json:"inputBytes"`
 	OutputBytes  uint64 `json:"outputBytes"`
 }

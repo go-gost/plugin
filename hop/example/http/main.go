@@ -54,6 +54,7 @@ type hopRequest struct {
 	Addr    string `json:"addr"`
 	Host    string `json:"host"`
 	Client  string `json:"client"`
+	Src     string `json:"src"`
 }
 
 func main() {
@@ -73,7 +74,7 @@ func main() {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		log.Printf("hop: network=%s addr=%s host=%s client=%s", rb.Network, rb.Addr, rb.Host, rb.Client)
+		log.Printf("hop: network=%s addr=%s host=%s client=%s src=%s", rb.Network, rb.Addr, rb.Host, rb.Client, rb.Src)
 
 		node := nodes[counter.Add(1)%uint64(len(nodes))]
 		json.NewEncoder(w).Encode(node)
