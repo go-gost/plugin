@@ -8,6 +8,7 @@ option go_package = "github.com/go-gost/plugin/admission/proto";
 
 message AdmissionRequest {
 	string addr = 1;
+	string service = 2;
 }
 
 message AdmissionReply {

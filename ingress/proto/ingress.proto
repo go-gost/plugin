@@ -8,6 +8,7 @@ option go_package = "github.com/go-gost/plugin/ingress/proto";
 
 message GetRuleRequest {
 	string host = 1;
+	string service = 2;
 }
 
 message GetRuleReply {
@@ -17,6 +18,7 @@ message GetRuleReply {
 message SetRuleRequest {
 	string host = 1;
 	string endpoint = 2;
+	string service = 3;
 }
 
 message SetRuleReply {

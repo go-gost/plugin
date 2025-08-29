@@ -12,6 +12,7 @@ message BypassRequest {
 	string network = 3;
 	string host = 4;
 	string path = 5;
+	string service = 6;
 }
 
 message BypassReply {
