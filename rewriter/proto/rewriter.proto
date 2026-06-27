@@ -1,0 +1,21 @@
+// protoc --go_out=. --go_opt=paths=source_relative \
+//	--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+//	rewriter.proto
+
+syntax = "proto3";
+package proto;
+option go_package = "github.com/go-gost/plugin/rewriter/proto";
+
+message RewriteRequest {
+	bytes data = 1;
+	bytes metadata = 2;
+}
+
+message RewriteReply {
+	bool ok = 1;
+	bytes data = 2;
+}
+
+service Rewriter {
+	rpc Rewrite(RewriteRequest) returns (RewriteReply);
+}
