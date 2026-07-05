@@ -11,6 +11,9 @@ message AuthenticateRequest {
 	string password = 2;
 	string client = 3;
 	string service = 4;
+	string client_cn = 5;
+	repeated string client_san = 6;
+	string client_cert_fingerprint = 7;
 }
 
 message AuthenticateReply {
