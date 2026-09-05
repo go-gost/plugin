@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.15.8
-// source: recorder.proto
+// source: recorder/proto/recorder.proto
 
 package proto
 
@@ -101,5 +101,5 @@ var Recorder_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "recorder.proto",
+	Metadata: "recorder/proto/recorder.proto",
 }

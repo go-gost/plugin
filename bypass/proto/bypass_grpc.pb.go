@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.15.8
-// source: bypass.proto
+// source: bypass/proto/bypass.proto
 
 package proto
 
@@ -101,5 +101,5 @@ var Bypass_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "bypass.proto",
+	Metadata: "bypass/proto/bypass.proto",
 }

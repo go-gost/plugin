@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.15.8
-// source: hop.proto
+// source: hop/proto/hop.proto
 
 package proto
 
@@ -101,5 +101,5 @@ var Hop_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "hop.proto",
+	Metadata: "hop/proto/hop.proto",
 }

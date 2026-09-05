@@ -8,11 +8,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Build the module
 go build ./...
 
-# Regenerate protobuf code (run from a service proto directory)
-protoc --go_out=. --go_opt=paths=source_relative \
+# Regenerate protobuf code (always from the module root, passing the full
+# relative path — never from inside a proto directory)
+protoc --proto_path=. --go_out=. --go_opt=paths=source_relative \
     --go-grpc_out=. --go-grpc_opt=paths=source_relative \
-    admission.proto
+    admission/proto/admission.proto
 ```
+
+The full path becomes the proto file's registered name (e.g. `admission/proto/admission.proto`), which is required: protobuf registers file descriptors in a process-global registry, and bare names like `auth.proto` collide with other libraries and panic at init (`proto: file "auth.proto" is already registered`, see go-gost/plugin#3). Regenerating from inside a service directory reintroduces the bare names — don't.
 
 Generated code was produced with `protoc-gen-go v1.28.1`, `protoc-gen-go-grpc v1.2.0`, `protoc v3.15.8`. The `go_package` option in each `.proto` sets the output path (e.g. `github.com/go-gost/plugin/admission/proto`).
 

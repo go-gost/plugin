@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.15.8
-// source: limiter.proto
+// source: limiter/traffic/proto/limiter.proto
 
 package proto
 
@@ -101,5 +101,5 @@ var Limiter_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "limiter.proto",
+	Metadata: "limiter/traffic/proto/limiter.proto",
 }

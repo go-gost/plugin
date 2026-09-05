@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.15.8
-// source: sd.proto
+// source: sd/proto/sd.proto
 
 package proto
 
@@ -209,5 +209,5 @@ var SD_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "sd.proto",
+	Metadata: "sd/proto/sd.proto",
 }

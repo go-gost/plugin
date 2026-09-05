@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.15.8
-// source: admission.proto
+// source: admission/proto/admission.proto
 
 package proto
 
@@ -101,5 +101,5 @@ var Admission_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "admission.proto",
+	Metadata: "admission/proto/admission.proto",
 }

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.15.8
-// source: hosts.proto
+// source: hosts/proto/hosts.proto
 
 package proto
 
@@ -101,5 +101,5 @@ var HostMapper_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "hosts.proto",
+	Metadata: "hosts/proto/hosts.proto",
 }

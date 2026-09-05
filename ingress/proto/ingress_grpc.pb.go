@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.15.8
-// source: ingress.proto
+// source: ingress/proto/ingress.proto
 
 package proto
 
@@ -137,5 +137,5 @@ var Ingress_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "ingress.proto",
+	Metadata: "ingress/proto/ingress.proto",
 }
