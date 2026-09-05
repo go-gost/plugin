@@ -20,7 +20,7 @@ Generated code was produced with `protoc-gen-go v1.28.1`, `protoc-gen-go-grpc v1
 
 This module defines the **gRPC plugin protocol** for [GOST](https://github.com/go-gost/gost). External plugin processes implement these gRPC services to extend GOST's behavior (authentication, rate limiting, DNS resolution, etc.). The core GOST binary communicates with plugins either via **gRPC** or **HTTP/JSON** — examples for both transports are provided.
 
-### Service catalog (12 plugin types)
+### Service catalog (13 plugin types)
 
 Each subdirectory follows the same structure: `proto/<name>.proto` + generated `.pb.go`/`_grpc.pb.go`, and `example/` with reference implementations (gRPC and optionally HTTP).
 
@@ -34,12 +34,13 @@ Each subdirectory follows the same structure: `proto/<name>.proto` + generated `
 | `ingress/` | `Ingress` | `GetRule(req) → (endpoint)`, `SetRule(req) → (ok)` | `type: ingress` |
 | `limiter/traffic/` | `Limiter` | `Limit(req) → (in, out)` | `type: limiter` |
 | `observer/` | `Observer` | `Observe(events[]) → (ok)` | `type: observer` |
+| `p2p/` | `P2P` | `OpenTunnel(req) → (ok, id, endpoint)`, `CloseTunnel(id) → (ok)`, `Status` | top-level `p2ps:` section (`plugin.type: grpc`) |
 | `recorder/` | `Recorder` | `Record(data, metadata) → (ok)` | `type: recorder` |
 | `resolver/` | `Resolver` | `Resolve(req) → (ips[], ok)` | `type: resolver` |
 | `router/` | `Router` | `GetRoute(req) → (dst, gateway)` | `type: router` |
 | `sd/` | `SD` | `Register`, `Deregister`, `Renew`, `Get` | `type: sd` |
 
-All RPCs are **unary** (no streaming). Every request carries proxy context fields (`network`, `addr`, `host`, `client`, `service`) relevant to the intercepted connection.
+All RPCs are **unary** (no streaming). Every request carries proxy context fields (`network`, `addr`, `host`, `client`, `service`) relevant to the intercepted connection. The p2p service deviates deliberately: `peer` and `endpoint` are opaque strings (the plugin defines their semantics), there is no `example/` in this module (the standalone `p2p/` host repo is the reference implementation), and only the gRPC transport exists.
 
 ### Dual transport: gRPC + HTTP
 

@@ -16,6 +16,7 @@ gRPC-based plugin protocol definitions for [GOST](https://github.com/go-gost/gos
 | [ingress](ingress/) | `Ingress` | Ingress rule management |
 | [limiter/traffic](limiter/traffic/) | `Limiter` | Per-connection bandwidth limits |
 | [observer](observer/) | `Observer` | Receive connection and traffic events |
+| [p2p](p2p/) | `P2P` | Establish tunnels to peers for P2P connectivity |
 | [recorder](recorder/) | `Recorder` | Record proxied traffic |
 | [resolver](resolver/) | `Resolver` | Custom DNS resolution |
 | [router](router/) | `Router` | Custom route selection |
@@ -111,6 +112,40 @@ services:
       type: admission
       addr: 127.0.0.1:8000
 ```
+
+### P2P plugin
+
+The `P2P` service lets GOST establish the network path to a chain node through
+a tunnel opened by an external plugin (NAT traversal, relay, hole punching —
+the strategy is entirely up to the plugin). The client sends an opaque `peer`
+identifier; the plugin replies with an opaque `endpoint` handle (v1: a locally
+dialable TCP `host:port`). P2P plugins are declared in a top-level `p2ps:`
+section and referenced by chain node metadata:
+
+```yaml
+p2ps:
+  - name: p2p-1
+    plugin:
+      type: grpc
+      addr: 127.0.0.1:8003
+
+chains:
+  - name: chain-0
+    hops:
+      - name: hop-0
+        nodes:
+          - name: node-0
+            addr: 192.168.1.10:8080
+            connector:
+              type: http
+            dialer:
+              type: tcp
+            metadata:
+              p2p: p2p-1
+```
+
+A reference implementation of the plugin host (stub: local TCP bridge) lives in
+the standalone [p2p](https://github.com/go-gost/p2p) repo.
 
 ## Code generation
 

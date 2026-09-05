@@ -1,0 +1,10 @@
+# Index / IDE / agent state
+.codegraph/
+.claude/
+.remember/
+
+# Build & test artifacts
+*.test
+coverage.out
+coverage*.out
+coverage*.tmp
