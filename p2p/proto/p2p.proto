@@ -14,6 +14,10 @@ option go_package = "github.com/go-gost/plugin/p2p/proto";
 // The client only passes it through.
 message OpenTunnelRequest {
 	string peer = 1;
+	// network selects the endpoint's semantics: "tcp" (a byte stream; empty
+	// means tcp) or "udp" (a datagram endpoint, one datagram per write).
+	// Values are validated by the plugin.
+	string network = 2;
 }
 
 // id is assigned by the server; the client must return it verbatim when
@@ -21,8 +25,8 @@ message OpenTunnelRequest {
 message OpenTunnelReply {
 	bool ok = 1;
 	string id = 2;
-	// endpoint is the tunnel handle (not interpreted by GOST):
-	// v1 is a locally dialable TCP "host:port" (no scheme).
+	// endpoint is the tunnel handle (not interpreted by GOST): a locally
+	// dialable "host:port" of the requested network (no scheme).
 	string endpoint = 3;
 	string error = 4; // human-readable reason when ok == false
 }
