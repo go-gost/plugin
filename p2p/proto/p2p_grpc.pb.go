@@ -23,7 +23,11 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type P2PClient interface {
 	OpenTunnel(ctx context.Context, in *OpenTunnelRequest, opts ...grpc.CallOption) (*OpenTunnelReply, error)
-	CloseTunnel(ctx context.Context, in *CloseTunnelRequest, opts ...grpc.CallOption) (*CloseTunnelReply, error)
+	// Tunnel carries the tunnel's data; the server binds the stream to the
+	// tunnel named by the "id" gRPC metadata key issued by OpenTunnel. The
+	// stream's lifetime IS the tunnel's lifetime: the stream ending
+	// (EOF/error, or the server handler returning) tears the tunnel down.
+	Tunnel(ctx context.Context, opts ...grpc.CallOption) (P2P_TunnelClient, error)
 	Status(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*StatusReply, error)
 }
 
@@ -44,13 +48,35 @@ func (c *p2PClient) OpenTunnel(ctx context.Context, in *OpenTunnelRequest, opts 
 	return out, nil
 }
 
-func (c *p2PClient) CloseTunnel(ctx context.Context, in *CloseTunnelRequest, opts ...grpc.CallOption) (*CloseTunnelReply, error) {
-	out := new(CloseTunnelReply)
-	err := c.cc.Invoke(ctx, "/proto.P2P/CloseTunnel", in, out, opts...)
+func (c *p2PClient) Tunnel(ctx context.Context, opts ...grpc.CallOption) (P2P_TunnelClient, error) {
+	stream, err := c.cc.NewStream(ctx, &P2P_ServiceDesc.Streams[0], "/proto.P2P/Tunnel", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &p2PTunnelClient{stream}
+	return x, nil
+}
+
+type P2P_TunnelClient interface {
+	Send(*Chunk) error
+	Recv() (*Chunk, error)
+	grpc.ClientStream
+}
+
+type p2PTunnelClient struct {
+	grpc.ClientStream
+}
+
+func (x *p2PTunnelClient) Send(m *Chunk) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *p2PTunnelClient) Recv() (*Chunk, error) {
+	m := new(Chunk)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func (c *p2PClient) Status(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*StatusReply, error) {
@@ -67,7 +93,11 @@ func (c *p2PClient) Status(ctx context.Context, in *StatusRequest, opts ...grpc.
 // for forward compatibility
 type P2PServer interface {
 	OpenTunnel(context.Context, *OpenTunnelRequest) (*OpenTunnelReply, error)
-	CloseTunnel(context.Context, *CloseTunnelRequest) (*CloseTunnelReply, error)
+	// Tunnel carries the tunnel's data; the server binds the stream to the
+	// tunnel named by the "id" gRPC metadata key issued by OpenTunnel. The
+	// stream's lifetime IS the tunnel's lifetime: the stream ending
+	// (EOF/error, or the server handler returning) tears the tunnel down.
+	Tunnel(P2P_TunnelServer) error
 	Status(context.Context, *StatusRequest) (*StatusReply, error)
 	mustEmbedUnimplementedP2PServer()
 }
@@ -79,8 +109,8 @@ type UnimplementedP2PServer struct {
 func (UnimplementedP2PServer) OpenTunnel(context.Context, *OpenTunnelRequest) (*OpenTunnelReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OpenTunnel not implemented")
 }
-func (UnimplementedP2PServer) CloseTunnel(context.Context, *CloseTunnelRequest) (*CloseTunnelReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CloseTunnel not implemented")
+func (UnimplementedP2PServer) Tunnel(P2P_TunnelServer) error {
+	return status.Errorf(codes.Unimplemented, "method Tunnel not implemented")
 }
 func (UnimplementedP2PServer) Status(context.Context, *StatusRequest) (*StatusReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Status not implemented")
@@ -116,22 +146,30 @@ func _P2P_OpenTunnel_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _P2P_CloseTunnel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CloseTunnelRequest)
-	if err := dec(in); err != nil {
+func _P2P_Tunnel_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(P2PServer).Tunnel(&p2PTunnelServer{stream})
+}
+
+type P2P_TunnelServer interface {
+	Send(*Chunk) error
+	Recv() (*Chunk, error)
+	grpc.ServerStream
+}
+
+type p2PTunnelServer struct {
+	grpc.ServerStream
+}
+
+func (x *p2PTunnelServer) Send(m *Chunk) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *p2PTunnelServer) Recv() (*Chunk, error) {
+	m := new(Chunk)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(P2PServer).CloseTunnel(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/proto.P2P/CloseTunnel",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(P2PServer).CloseTunnel(ctx, req.(*CloseTunnelRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return m, nil
 }
 
 func _P2P_Status_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -164,14 +202,17 @@ var P2P_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _P2P_OpenTunnel_Handler,
 		},
 		{
-			MethodName: "CloseTunnel",
-			Handler:    _P2P_CloseTunnel_Handler,
-		},
-		{
 			MethodName: "Status",
 			Handler:    _P2P_Status_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Tunnel",
+			Handler:       _P2P_Tunnel_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "p2p/proto/p2p.proto",
 }

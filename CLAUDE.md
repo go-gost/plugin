@@ -37,13 +37,13 @@ Each subdirectory follows the same structure: `proto/<name>.proto` + generated `
 | `ingress/` | `Ingress` | `GetRule(req) → (endpoint)`, `SetRule(req) → (ok)` | `type: ingress` |
 | `limiter/traffic/` | `Limiter` | `Limit(req) → (in, out)` | `type: limiter` |
 | `observer/` | `Observer` | `Observe(events[]) → (ok)` | `type: observer` |
-| `p2p/` | `P2P` | `OpenTunnel(req) → (ok, id, endpoint)`, `CloseTunnel(id) → (ok)`, `Status` | top-level `p2ps:` section (`plugin.type: grpc`) |
+| `p2p/` | `P2P` | `OpenTunnel(req) → (ok, id)`, `Tunnel(stream) → (stream)`, `Status` | top-level `p2ps:` section (`plugin.type: grpc`) |
 | `recorder/` | `Recorder` | `Record(data, metadata) → (ok)` | `type: recorder` |
 | `resolver/` | `Resolver` | `Resolve(req) → (ips[], ok)` | `type: resolver` |
 | `router/` | `Router` | `GetRoute(req) → (dst, gateway)` | `type: router` |
 | `sd/` | `SD` | `Register`, `Deregister`, `Renew`, `Get` | `type: sd` |
 
-All RPCs are **unary** (no streaming). Every request carries proxy context fields (`network`, `addr`, `host`, `client`, `service`) relevant to the intercepted connection. The p2p service deviates deliberately: `peer` and `endpoint` are opaque strings (the plugin defines their semantics), there is no `example/` in this module (the standalone `p2p/` host repo is the reference implementation), and only the gRPC transport exists.
+All RPCs are **unary** (no streaming), with one deliberate exception: the p2p service's `Tunnel` is a **bidirectional stream** carrying the tunnel's data (its lifetime is the tunnel's lifetime). Every request carries proxy context fields (`network`, `addr`, `host`, `client`, `service`) relevant to the intercepted connection. The p2p service deviates further: `peer` is an opaque string (the plugin defines its semantics), there is no `example/` for it in this module (the standalone `p2p/` host repo is the reference implementation), and only the gRPC transport exists.
 
 ### Dual transport: gRPC + HTTP
 

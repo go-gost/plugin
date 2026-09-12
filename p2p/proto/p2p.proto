@@ -1,42 +1,40 @@
-// protoc --go_out=. --go_opt=paths=source_relative \
+// protoc --proto_path=. --go_out=. --go_opt=paths=source_relative \
 //	--go-grpc_out=. --go-grpc_opt=paths=source_relative \
-//	p2p.proto
+//	p2p/proto/p2p.proto
+// (pinned toolchain: protoc v3.15.8, protoc-gen-go v1.28.1, protoc-gen-go-grpc v1.2.0)
 
 syntax = "proto3";
 package proto;
 option go_package = "github.com/go-gost/plugin/p2p/proto";
 
-// OpenTunnel asks the plugin to establish a tunnel to the given peer and
-// return a local endpoint for it.
+// OpenTunnel asks the plugin to authorize a tunnel to the given peer and
+// allocate the id that binds the Tunnel data stream to it.
 //
 // peer is opaque to the client: its semantics are defined by the plugin
 // itself (rendezvous capability ID, WG public key, custom credential...).
 // The client only passes it through.
 message OpenTunnelRequest {
 	string peer = 1;
-	// network selects the endpoint's semantics: "tcp" (a byte stream; empty
-	// means tcp) or "udp" (a datagram endpoint, one datagram per write).
+	// network selects the tunnel's semantics: "tcp" (a byte stream; empty
+	// means tcp) or "udp" (a datagram stream, one datagram per frame).
 	// Values are validated by the plugin.
 	string network = 2;
 }
 
-// id is assigned by the server; the client must return it verbatim when
-// closing the tunnel.
+// id is assigned by the server; the client must present it as the "id"
+// metadata key on the Tunnel stream. It is the stream's credential and must
+// be unguessable and treated as a secret.
 message OpenTunnelReply {
 	bool ok = 1;
 	string id = 2;
-	// endpoint is the tunnel handle (not interpreted by GOST): a locally
-	// dialable "host:port" of the requested network (no scheme).
-	string endpoint = 3;
-	string error = 4; // human-readable reason when ok == false
+	reserved 3;
+	reserved "endpoint"; // removed with the local-endpoint data plane
+	string error = 4;    // human-readable reason when ok == false
 }
 
-message CloseTunnelRequest {
-	string id = 1;
-}
-
-message CloseTunnelReply {
-	bool ok = 1;
+// Chunk is one frame of a Tunnel byte stream.
+message Chunk {
+	bytes data = 1;
 }
 
 message StatusRequest {}
@@ -47,6 +45,10 @@ message StatusReply {
 
 service P2P {
 	rpc OpenTunnel(OpenTunnelRequest) returns (OpenTunnelReply);
-	rpc CloseTunnel(CloseTunnelRequest) returns (CloseTunnelReply);
+	// Tunnel carries the tunnel's data; the server binds the stream to the
+	// tunnel named by the "id" gRPC metadata key issued by OpenTunnel. The
+	// stream's lifetime IS the tunnel's lifetime: the stream ending
+	// (EOF/error, or the server handler returning) tears the tunnel down.
+	rpc Tunnel(stream Chunk) returns (stream Chunk);
 	rpc Status(StatusRequest) returns (StatusReply);
 }
