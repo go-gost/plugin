@@ -53,6 +53,12 @@ message StatusReply {
 	int32 encrypted_peers = 8; // gauge: connected peers with an encrypted session
 	int32 plaintext_peers = 9; // gauge: connected peers without one
 	repeated PeerDiagnostic peer_diagnostics = 10;
+	// relay_connected reports whether the relay transport holds a live
+	// connection, and relay_error the last dial failure (empty while
+	// connected). A live direct session keeps every counter healthy while the
+	// relay is down, so these are the only fields that can show an outage.
+	bool   relay_connected = 16;
+	string relay_error     = 17;
 }
 
 // PeerDiagnostic is one connected peer's live state, as Status reports it.
@@ -73,6 +79,9 @@ message PeerDiagnostic {
 	int64  attempts = 11;
 	int64  ups      = 12;
 	int64  drops    = 13;
+	// trace is the peer's recent punch history: short human-readable lines,
+	// oldest first (newest kept). Empty for a relay-only peer.
+	repeated string trace = 15;
 }
 
 service P2P {
