@@ -52,6 +52,27 @@ message StatusReply {
 	int64 streams_derp   = 7; // counter
 	int32 encrypted_peers = 8; // gauge: connected peers with an encrypted session
 	int32 plaintext_peers = 9; // gauge: connected peers without one
+	repeated PeerDiagnostic peer_diagnostics = 10;
+}
+
+// PeerDiagnostic is one connected peer's live state, as Status reports it.
+// peer keys the entry: the list is repeated, so two peers with the same path
+// would otherwise be byte-identical and unattributable.
+message PeerDiagnostic {
+	string peer        = 14;
+	string path        = 1;
+	string reason      = 2;
+	string state       = 3;
+	bool   failed      = 4;
+	string last_error  = 5;
+	string peer_addr   = 6;
+	int32  candidates  = 7;
+	repeated string caps = 8;
+	int64  session_age_ms  = 9;
+	int64  last_recv_age_ms = 10;
+	int64  attempts = 11;
+	int64  ups      = 12;
+	int64  drops    = 13;
 }
 
 service P2P {
